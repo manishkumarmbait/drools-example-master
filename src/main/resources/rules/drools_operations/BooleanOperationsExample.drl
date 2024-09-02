@@ -1,0 +1,16 @@
+package com.zhenhui.atlantis.brms.web.rest.dto
+
+import java.math.BigDecimal
+import com.beaver.drools.common.model.RuleResult
+
+rule "微民 住宿费  {EXP_LEVEL}IN[1] AND {ER_EXP_FEE}>{ER_DAYS}*600"
+
+dialect "mvel"
+    when
+       $invoice: MatchInvoiceTravelRuleRequestDto(
+        data["EXPENSE_LEVEL"] in ("1"),
+        BigDecimal.valueOf(Double.valueOf(data.get("INVOICE_AMOUNT"))) > 600 * Double.valueOf(data.get("days")) )
+    then
+        $invoice.setResult(RuleResult.REJECT);
+        $invoice.setRemarkMessage("微民 住宿费  {EXP_LEVEL}IN[1] AND {ER_EXP_FEE}>{ER_DAYS}*600");
+end
